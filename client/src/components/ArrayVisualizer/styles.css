@@ -1,0 +1,92 @@
+.controls{
+    margin: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.controls input[type = "number"]{
+    padding: 5px;
+    width: 150px;
+}
+
+.controls input[type="range"] {
+    width: 150px;
+    margin: 0 10px;
+}
+
+.controls button{
+    padding: 8px 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #064234;
+    color: white;
+}
+
+.controls button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.controls button:not(:disabled):hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+.controls button.stop{
+    background: #e74c3c;
+}
+
+.sort-controls{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.array-input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+.array-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+  }
+  
+svg{
+    border: 1px solid #ddd;
+    margin: 20px;
+    border-radius: 4px;
+}
+
+rect{
+    transition: all 0.3s ease;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+rect:hover{
+    opacity: 0.8;
+}
+
+.bar-group {
+    cursor: move;
+}
+  
+.bar-group.active {
+    cursor: grabbing;
+}
+  
+.bar-group.active rect {
+    opacity: 0.7;
+}
+ 
+.bar-group rect {
+    transition: fill 0.3s ease;
+}
