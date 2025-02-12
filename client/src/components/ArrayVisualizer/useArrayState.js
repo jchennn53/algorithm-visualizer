@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-const useArrayState = (initial = [3, 1, 4, 2]) => {
+const useArrayState = (initial = []) => {
     const [array, setArray] = useState(initial);
 
     const addElement = (element) => {
-        if(element !== '' && !isNaN(element)){
+        if(element !== '' && !isNaN(element) && array.length < 20){
             setArray(arr => [...arr, Number(element)]);
         }
     };

@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import './styles.css';
 
 const HIGHLIGHT = 'red';
-const NORMAL = 'green';
+const NORMAL = '#005340';
 
 const ArrayCanvas = ({ 
     array, 
@@ -13,6 +13,7 @@ const ArrayCanvas = ({
     currentStep, 
     speed = 500,
     swapElements,
+    isManualStep,
     isSorting = false
 }) => {
     const svgRef = useRef();
@@ -61,6 +62,9 @@ const ArrayCanvas = ({
         .attr('x', xScale.bandwidth() / 2)
         .attr('y', d => yScale(d) - 5)
         .attr('text-anchor', 'middle')
+        .attr('fill', 'white')
+        .attr('font-size', '14px')
+        .attr('font-weight', 'bold')
         .style('user-select', 'none')
         .style('pointer-events', 'none');
 
@@ -70,13 +74,13 @@ const ArrayCanvas = ({
         //apply transitions for position and color
         allBars
         .transition()
-        .duration(isSorting ? speed : 0)
+        .duration(isSorting || isManualStep ? speed : 0)
         .ease(d3.easeCubicInOut)
         .attr('transform', (_, i) => `translate(${xScale(i)},0)`);
 
         allBars.select('rect')
         .transition()
-        .duration(isSorting ? speed : 0)
+        .duration(isSorting || isManualStep ? speed : 0)
         .attr('fill', (_, i) => 
             steps && steps[currentStep]?.comparedIndeces?.includes(i) 
             ? HIGHLIGHT 
@@ -87,7 +91,7 @@ const ArrayCanvas = ({
 
         allBars.select('text')
         .transition()
-        .duration(isSorting ? speed : 0)
+        .duration(isSorting ? speed + 100: 0)
         .attr('y', d => yScale(d) - 5)
         .text(d => d);
 

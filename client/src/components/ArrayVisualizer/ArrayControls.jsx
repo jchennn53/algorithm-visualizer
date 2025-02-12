@@ -1,7 +1,9 @@
 import { useState } from 'react';
+//import { Plus, Shuffle, SkipBack, SkipForward, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
 const ArrayControls = ({
     addElement,
+    array,
     setRandomArray,
     isSorting,
     startSorting,
@@ -12,7 +14,9 @@ const ArrayControls = ({
     currentStep,
     goPrev,
     goNext,
-    pauseSorting
+    pauseSorting,
+    goToStart,
+    goToEnd
 }) => {
     const [element, setElement] = useState('');
 
@@ -25,22 +29,29 @@ const ArrayControls = ({
 
     return (
         <div className = "controls">
-            <input type = "number" value = {element} onChange = {(e) => setElement(e.target.value)} 
-                    placeholder = "Enter number" disabled = {isSorting} />
 
-            <button onClick = {handleAdd}
-                    disabled = {isSorting || element.trim() === ''}>
-            Add
-            </button>
+            <div className = "input-group">
+                <input type = "number" value = {element} onChange = {(e) => setElement(e.target.value)} 
+                        placeholder = "Enter number" disabled = {isSorting} />
 
-            <button onClick = {() => {
-                    setRandomArray();
-                    resetSorting();}} 
-                    disabled = {isSorting}>
-            Random array
-            </button>
+                <button onClick = {handleAdd}
+                        disabled = {isSorting || element.trim() === '' || array.length >= 20}>
+                    Add
+                </button>
+
+                <button onClick = {() => {
+                        setRandomArray();
+                        resetSorting();}} 
+                        disabled = {isSorting}>
+                    Random array
+                </button>
+            </div>
 
             <div className = "sort-controls">
+                <button onClick = {goToStart} disabled = {isSorting || currentStep <= 0 || steps.length === 0}>
+                    Start state
+                </button>
+
                 <button onClick = {goPrev} disabled = {isSorting || currentStep <= 0 || steps.length === 0}
                         className = {currentStep <= 0 ? 'disabled' : ''}>
                     Previous step
@@ -53,7 +64,11 @@ const ArrayControls = ({
 
                 <button onClick = {goNext} disabled = {isSorting || currentStep === steps.length - 1} 
                         className = {currentStep === steps.length - 1 ? 'disabled' : ''}>
-                    Next step
+                    Next step 
+                </button>
+
+                <button onClick = {goToEnd} disabled = {isSorting || currentStep === steps.length - 1}>
+                    End state 
                 </button>
 
                 <label>

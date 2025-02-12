@@ -6,6 +6,7 @@ const useSorting = (array, setArray) => {
     const [steps, setSteps] = useState([]);
     const [speed, setSpeed] = useState(1000);
     const [isDragging, setIsDragging] = useState(false);
+    const [isManualStep, setIsManualStep] = useState(false);
 
     const fetchSortingSteps = useCallback(async () => {
         if(isDragging) return;
@@ -25,10 +26,9 @@ const useSorting = (array, setArray) => {
 
     const startSorting = async () => {
         if(isDragging) return;
-        if(steps.length === 0){
-            const generatedSteps = await fetchSortingSteps();
-            setSteps(generatedSteps);
-        }
+
+        const generatedSteps = await fetchSortingSteps();
+        setSteps(generatedSteps);
         setIsSorting(true);
     };
 
@@ -39,13 +39,41 @@ const useSorting = (array, setArray) => {
         setSteps([]);
     };
 
+    const goToStart = async () => {
+        let workingSteps = steps;
+        
+        if(workingSteps.length === 0){
+            workingSteps = await fetchSortingSteps();
+            setSteps(workingSteps);
+        }
+
+        setIsManualStep(true);
+        setCurrentStep(0);
+        setArray(workingSteps[0].array);
+        setTimeout(() => setIsManualStep(false), speed);
+        setIsSorting(false);
+    }
+
+    const goToEnd = async () => {
+        const workingSteps = await fetchSortingSteps();
+        setSteps(workingSteps);
+
+        setIsManualStep(true);
+        setCurrentStep(workingSteps.length - 1);
+        setArray(workingSteps[workingSteps.length - 1].array);
+        setTimeout(() => setIsManualStep(false), speed);
+        setIsSorting(false);
+    }
+
     const goPrev = () => {
         if(steps.length === 0) return;
 
         const newStep = Math.max(0, currentStep - 1);
         if(newStep !== currentStep){
+            setIsManualStep(true);
             setCurrentStep(newStep);
             setArray(steps[newStep].array);
+            setTimeout(() => setIsManualStep(false), speed);
         }
 
         setIsSorting(false);
@@ -63,12 +91,18 @@ const useSorting = (array, setArray) => {
             const newStep = currentStep + 1;
             setCurrentStep(newStep);
             setArray(workingSteps[newStep].array);
+            if(newStep !== currentStep){
+                setIsManualStep(true);
+                setTimeout(() => setIsManualStep(false), speed);
+            }
         }
 
         setIsSorting(false);
     }
 
-    const pauseSorting = () => setIsSorting(false);
+    const pauseSorting = () => {
+        setIsSorting(false);
+    };
 
     useEffect(() => {
         if(steps[currentStep]){
@@ -79,7 +113,6 @@ const useSorting = (array, setArray) => {
     useEffect(() => {
         if(isSorting && currentStep < steps.length - 1){
             const timer = setTimeout(() => {
-                //setArray([...steps[currentStep + 1].array]);
                 setCurrentStep(prev => prev + 1);   
             }, speed);
             return () => clearTimeout(timer);
@@ -87,6 +120,13 @@ const useSorting = (array, setArray) => {
             setIsSorting(false);
         }
     }, [isSorting, currentStep, steps, speed]);
+
+    // add effect to detect array changes during sorting
+    useEffect(() => {
+        if (isSorting) {
+            startSorting();
+        }
+    }, [array.length]);
 
     return {
         isSorting, 
@@ -96,11 +136,15 @@ const useSorting = (array, setArray) => {
         setSpeed, 
         startSorting, 
         resetSorting, 
+        goToStart,
+        goToEnd,
         goPrev,
         goNext,
         pauseSorting,
+        isManualStep,
         isDragging, 
-        setIsDragging };
+        setIsDragging 
+    };
 };
 
 export default useSorting;

@@ -18,6 +18,7 @@ function App() {
 					          steps = {sortingState.steps}
 					          currentStep = {sortingState.currentStep}
 					          speed = {sortingState.speed}
+                    isManualStep = {sortingState.isManualStep}
                     isSorting = {sortingState.isSorting}
 		    />
       </div>
