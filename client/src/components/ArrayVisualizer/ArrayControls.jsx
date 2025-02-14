@@ -62,12 +62,12 @@ const ArrayControls = ({
                     {isSorting ? 'Pause' : 'Start'}
                 </button>
 
-                <button onClick = {goNext} disabled = {isSorting || currentStep === steps.length - 1} 
+                <button onClick = {goNext} disabled = {isSorting || (steps.length > 0 && currentStep === steps.length - 1)} 
                         className = {currentStep === steps.length - 1 ? 'disabled' : ''}>
                     Next step 
                 </button>
 
-                <button onClick = {goToEnd} disabled = {isSorting || currentStep === steps.length - 1}>
+                <button onClick = {goToEnd} disabled = {isSorting || (steps.length > 0 && currentStep === steps.length - 1)}>
                     End state 
                 </button>
 

@@ -1,67 +1,84 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const useSorting = (array, setArray) => {
+    //too many states, need to refactor
     const [isSorting, setIsSorting] = useState(false);
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(0); 
     const [steps, setSteps] = useState([]);
     const [speed, setSpeed] = useState(1000);
     const [isDragging, setIsDragging] = useState(false);
     const [isManualStep, setIsManualStep] = useState(false);
+    const [initialArray, setInitialArray] = useState([]);
 
-    const fetchSortingSteps = useCallback(async () => {
+    const fetchSortingSteps = useCallback(async (baseArray) => {
         if(isDragging) return;
+
         try{
             const response = await fetch('http://localhost:5000/bubble-sort', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ array })
+                body: JSON.stringify({ array: baseArray })
             });
             const data = await response.json();
-            return [{ array: array }, ...data.steps];
+            return [{ array: baseArray }, ...data.steps];
         } catch(error){
             console.error(error);
             return [];
         }
-    }, [array]);
+    }, [isDragging]);
 
     const startSorting = async () => {
         if(isDragging) return;
 
-        const generatedSteps = await fetchSortingSteps();
+        if(initialArray.length === 0){
+            setInitialArray([...array]);
+        }
+
+        const generatedSteps = await fetchSortingSteps(array);
         setSteps(generatedSteps);
         setIsSorting(true);
+        setCurrentStep(0); //temporary solution
+        setArray([...array]);
     };
 
     const resetSorting = () => {
         setIsSorting(false);
         setCurrentStep(0);
-        if(steps.length > 0) setArray(steps[0].array);
         setSteps([]);
+        setInitialArray([]);
     };
 
     const goToStart = async () => {
         let workingSteps = steps;
         
-        if(workingSteps.length === 0){
-            workingSteps = await fetchSortingSteps();
+        if(workingSteps.length === 0 && initialArray.length > 0){
+            workingSteps = await fetchSortingSteps(initialArray);
             setSteps(workingSteps);
         }
 
         setIsManualStep(true);
         setCurrentStep(0);
-        setArray(workingSteps[0].array);
+        setArray(initialArray);
         setTimeout(() => setIsManualStep(false), speed);
         setIsSorting(false);
+        console.log("initialArray", initialArray);
     }
 
     const goToEnd = async () => {
-        const workingSteps = await fetchSortingSteps();
-        setSteps(workingSteps);
+        let workingSteps = steps;
+    
+        if(workingSteps.length === 0){
+            workingSteps = await fetchSortingSteps(array);
+            setSteps(workingSteps);
+        }
 
-        setIsManualStep(true);
-        setCurrentStep(workingSteps.length - 1);
-        setArray(workingSteps[workingSteps.length - 1].array);
-        setTimeout(() => setIsManualStep(false), speed);
+        if(workingSteps.length > 0){
+            const lastStep = workingSteps.length - 1;
+            setIsManualStep(true);
+            setCurrentStep(lastStep);
+            setArray(workingSteps[lastStep].array);
+            setTimeout(() => setIsManualStep(false), speed);
+        }
         setIsSorting(false);
     }
 
@@ -80,10 +97,15 @@ const useSorting = (array, setArray) => {
     };
 
     const goNext = async () => {
+        if(initialArray.length === 0){
+            setInitialArray([...array]);
+            console.log("initialArray", initialArray);
+        }
+        
         let workingSteps = steps;
 
         if(workingSteps.length === 0){
-            workingSteps = await fetchSortingSteps();
+            workingSteps = await fetchSortingSteps(array);
             setSteps(workingSteps);
         }
 
@@ -91,10 +113,8 @@ const useSorting = (array, setArray) => {
             const newStep = currentStep + 1;
             setCurrentStep(newStep);
             setArray(workingSteps[newStep].array);
-            if(newStep !== currentStep){
-                setIsManualStep(true);
-                setTimeout(() => setIsManualStep(false), speed);
-            }
+            setIsManualStep(true);
+            setTimeout(() => setIsManualStep(false), speed);
         }
 
         setIsSorting(false);
@@ -120,13 +140,6 @@ const useSorting = (array, setArray) => {
             setIsSorting(false);
         }
     }, [isSorting, currentStep, steps, speed]);
-
-    // add effect to detect array changes during sorting
-    useEffect(() => {
-        if (isSorting) {
-            startSorting();
-        }
-    }, [array.length]);
 
     return {
         isSorting, 
