@@ -22,8 +22,11 @@ const ArrayControls = ({
 
     const handleAdd = () => {
         if (element.trim() !== '') {
-            addElement(element);
-            setElement('');
+            const wasAdded = addElement(element);
+            if (wasAdded) {
+                resetSorting(); //ensure sorting is reset when a new element is added
+                setElement('');
+            }
         }
     };
 
@@ -35,7 +38,7 @@ const ArrayControls = ({
                         placeholder = "Enter number" disabled = {isSorting} />
 
                 <button onClick = {handleAdd}
-                        disabled = {isSorting || element.trim() === '' || array.length >= 10}>
+                        disabled = {isSorting || element.trim() === '' || array.length >= 15}>
                     Add
                 </button>
 

@@ -133,10 +133,10 @@ const useSorting = (array, setArray) => {
     }, [isSorting, currentStep, steps, speed]);
 
     useEffect(() => {
-        if (steps[currentStep]) {
+        if (steps[currentStep] && isSorting) {
             setArray([...steps[currentStep].array]);
         }
-    }, [currentStep, steps, setArray]);
+    }, [currentStep, steps, setArray, isSorting]);
 
     return {
         isSorting,

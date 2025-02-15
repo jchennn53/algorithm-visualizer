@@ -4,9 +4,11 @@ const useArrayState = (initial = []) => {
     const [array, setArray] = useState(initial);
 
     const addElement = (element) => {
-        if(element !== '' && !isNaN(element) && array.length < 10){
+        if(element !== '' && !isNaN(element) && array.length < 15){
             setArray(arr => [...arr, Number(element)]);
+            return true;
         }
+        return false;
     };
 
     const removeElement = (index) => {
