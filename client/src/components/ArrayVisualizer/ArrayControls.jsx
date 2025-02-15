@@ -35,7 +35,7 @@ const ArrayControls = ({
                         placeholder = "Enter number" disabled = {isSorting} />
 
                 <button onClick = {handleAdd}
-                        disabled = {isSorting || element.trim() === '' || array.length >= 20}>
+                        disabled = {isSorting || element.trim() === '' || array.length >= 10}>
                     Add
                 </button>
 
@@ -58,7 +58,8 @@ const ArrayControls = ({
                 </button>
 
                 <button onClick = {isSorting ? pauseSorting : startSorting}
-                        className = {isSorting ? 'stop' : 'start'}>
+                        className = {isSorting ? 'stop' : 'start'}
+                        disabled = {!isSorting && steps.length > 0 && currentStep === steps.length - 1}>
                     {isSorting ? 'Pause' : 'Start'}
                 </button>
 

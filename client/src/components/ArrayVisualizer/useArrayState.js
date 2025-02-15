@@ -4,7 +4,7 @@ const useArrayState = (initial = []) => {
     const [array, setArray] = useState(initial);
 
     const addElement = (element) => {
-        if(element !== '' && !isNaN(element) && array.length < 20){
+        if(element !== '' && !isNaN(element) && array.length < 10){
             setArray(arr => [...arr, Number(element)]);
         }
     };
@@ -15,7 +15,7 @@ const useArrayState = (initial = []) => {
 
     const updateElement = (index, value) => {
         if(!isNaN(value)){
-            setArray(arr => arr.map((v, i) => i === index ? value : v));
+            setArray(arr => arr.map((v, i) => i === index ? Number(value) : v));
         }
     };
 
