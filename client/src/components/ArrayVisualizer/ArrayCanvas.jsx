@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import './styles.css';
 
 const HIGHLIGHT = 'red';
+const PIVOT_COLOR = '#9847f4';
 const NORMAL = '#005340';
 const MIN_BAR_WIDTH = 40;
 
@@ -84,6 +85,10 @@ const ArrayCanvas = ({
         //update all bars
         const allBars = bars.merge(barsEnter);
 
+        //get current step details
+        const current = steps && steps[currentStep] ? steps[currentStep] : {};
+        const { comparedIndices = [], pivotIndex = null } = current;
+
         //apply transitions for position and color
         allBars
             .transition()
@@ -95,11 +100,12 @@ const ArrayCanvas = ({
             .transition()
             .duration(isSorting || isManualStep ? speed : 0)
             .attr('width', xScale.bandwidth()) //ensure consistent width during updates
-            .attr('fill', (_, i) => 
-                steps && steps[currentStep]?.comparedIndeces?.includes(i) 
-                ? HIGHLIGHT 
-                : NORMAL
-            )
+            .attr('fill', (_, i) => {
+                if (pivotIndex !== null && i === pivotIndex) {
+                    return PIVOT_COLOR;
+                }
+                return comparedIndices.includes(i) ? HIGHLIGHT : NORMAL;
+            })
             .attr('y', d => yScale(d))
             .attr('height', d => height - 30 - yScale(d));
 

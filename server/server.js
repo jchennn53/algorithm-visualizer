@@ -21,7 +21,7 @@ app.post('/bubble-sort', (req, res) => {
 		for(let i = 0; i < arr.length - 1; i++){
 			steps.push({
 				array: [...arr],
-				comparedIndeces: [i, i + 1],
+				comparedIndices: [i, i + 1],
 				swapped: false
 			});
 
@@ -31,7 +31,7 @@ app.post('/bubble-sort', (req, res) => {
 				
 				steps.push({
 					array: [...arr],
-					comparedIndeces: [i, i + 1],
+					comparedIndices: [i, i + 1],
 					swapped: true
 				});
 			}
@@ -56,12 +56,22 @@ app.post('/quick-sort', (req, res) => {
 
     const partition = (arr, low, high) => {
         let pivot = arr[high];
+        let pi = high;
         let i = low - 1;
+
+        //add step for selecting the pivot
+        steps.push({
+            array: [...arr],
+            comparedIndices: [high],
+            pivotIndex: high,
+            swapped: false
+        });
 
         for (let j = low; j < high; j++) {
             steps.push({
                 array: [...arr],
-                comparedIndeces: [j, high],
+                comparedIndices: [j],
+                pivotIndex: pi,
                 swapped: false
             });
 
@@ -70,15 +80,19 @@ app.post('/quick-sort', (req, res) => {
                 [arr[i], arr[j]] = [arr[j], arr[i]];
                 steps.push({
                     array: [...arr],
-                    comparedIndeces: [i, j],
+                    comparedIndices: [i, j],
+                    pivotIndex: pi,
                     swapped: true
                 });
             }
         }
+
+		//add step for swapping the pivot into its final position
         [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
         steps.push({
             array: [...arr],
-            comparedIndeces: [i + 1, high],
+            comparedIndices: [i + 1, high],
+            pivotIndex: pi,
             swapped: true
         });
         return i + 1;
@@ -98,7 +112,7 @@ app.post('/selection-sort', (req, res) => {
         for (let j = i + 1; j < arr.length; j++) {
             steps.push({
                 array: [...arr],
-                comparedIndeces: [minIdx, j],
+                comparedIndices: [minIdx, j],
                 swapped: false
             });
 
@@ -110,7 +124,7 @@ app.post('/selection-sort', (req, res) => {
             [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
             steps.push({
                 array: [...arr],
-                comparedIndeces: [i, minIdx],
+                comparedIndices: [i, minIdx],
                 swapped: true
             });
         }
@@ -135,7 +149,7 @@ app.post('/insertion-sort', (req, res) => {
 		arr[j + 1] = key;
 		steps.push({
 			array: [...arr],
-			comparedIndeces: [j + 1, i],
+			comparedIndices: [j + 1, i],
 			swapped: true
 		});
 	}

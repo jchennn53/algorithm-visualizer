@@ -18,7 +18,7 @@ const fetchSortingSteps = useCallback(async (baseArray) => {
         body: JSON.stringify({ array: baseArray })
       });
       const data = await response.json();
-      return [{ array: [...baseArray], isInitial: true }, ...data.steps];
+      return [{ array: [...baseArray], isInitial: true, pivotIndex: null }, ...data.steps];
     } catch(error) {
       console.error(error);
       return [];
