@@ -17,11 +17,13 @@ const ArrayCanvas = ({
     isManualStep,
     isSorting = false
 }) => {
-    const svgRef = useRef();
+    const svgRef = useRef(); //reference to the svg element (d3)
     const [editingIndex, setEditingIndex] = useState(-1);
     const [editValue, setEditValue] = useState('');
+    const dragStart = useRef(0); //initial position of the drag
 
     useEffect(() => {
+        //select the svg element
         const svg = d3.select(svgRef.current);
         
         //required width based on the number of elements
@@ -111,7 +113,60 @@ const ArrayCanvas = ({
         //remove old elements
         bars.exit().remove();
 
-        
+        //add drag behavior
+        const drag = d3.drag()
+            .on('start', function(event, d) {
+                if (isSorting) return;
+                
+                const currentIndex = array.indexOf(d);
+                const barX = xScale(currentIndex);
+                //calculate offset between cursor and bar's left edge
+                dragStart.current = event.x - barX;
+                
+                d3.select(this)
+                    .raise()
+                    .classed('dragging', true)
+                    .attr('opacity', 0.7);
+            })
+            .on('drag', function(event) {
+                if (isSorting) return;
+                //adjust position by subtracting the initial offset
+                const adjustedX = event.x - dragStart.current;
+                d3.select(this)
+                    .attr('transform', `translate(${adjustedX},0)`);
+            })
+            .on('end', function(event, d) {
+                if (isSorting) return;
+                
+                const startIndex = array.indexOf(d);
+                //adjust the final position calculation to account for the offset
+                const adjustedX = event.x - dragStart.current;
+                const endIndex = Math.min(
+                    array.length - 1,
+                    Math.max(0, Math.round(adjustedX / xScale.step()))
+                );
+
+                if (startIndex !== endIndex) {
+                    swapElements(startIndex, endIndex);
+                }
+
+                d3.select(this)
+                    .classed('dragging', false)
+                    .attr('opacity', 1)
+                    .transition()
+                    .duration(200)
+                    .attr('transform', `translate(${xScale(endIndex)},0)`);
+            });
+
+        allBars
+            .style('cursor', 'grab')
+            .call(drag)
+            .on('click', function(event, d) {
+                if (event.defaultPrevented) return;
+                const index = array.indexOf(d);
+                removeElement(index);
+            });
+
         //handle editing input
         if (editingIndex !== -1) {
             const inputGroup = svg.append('foreignObject')
