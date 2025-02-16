@@ -1,0 +1,55 @@
+/* Algorithm Selector */
+.algorithm-selector {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+  
+.algorithm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+  
+.algorithm-card {
+    color: white;
+    font-weight: bold;
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-bg);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.algorithm-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--neon-shadow);
+    border-color: var(--accent-primary);
+}
+  
+
+.header-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+}
+  
+.back-button {
+    background-color: #005340;
+    border: 1px solid var(--accent-primary);
+    padding: 0.5rem 1rem;
+    color: white;
+}
+
+.back-button:hover {
+    cursor: pointer;
+}

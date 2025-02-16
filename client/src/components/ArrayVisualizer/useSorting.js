@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const useSorting = (array, setArray) => {
+const useSorting = (array, setArray, selectedAlgorithm) => {
     const [isSorting, setIsSorting] = useState(false);
     const [currentStep, setCurrentStep] = useState(0); 
     const [steps, setSteps] = useState([]);
@@ -8,22 +8,22 @@ const useSorting = (array, setArray) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isManualStep, setIsManualStep] = useState(false);
 
-    const fetchSortingSteps = useCallback(async (baseArray) => {
-        if(isDragging) return;
-
-        try {
-            const response = await fetch('http://localhost:5000/bubble-sort', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ array: baseArray })
-            });
-            const data = await response.json();
-            return [{ array: [...baseArray], isInitial: true }, ...data.steps];
-        } catch(error) {
-            console.error(error);
-            return [];
-        }
-    }, [isDragging]);
+const fetchSortingSteps = useCallback(async (baseArray) => {
+    if(isDragging) return;
+  
+    try {
+      const response = await fetch(`http://localhost:5000/${selectedAlgorithm}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ array: baseArray })
+      });
+      const data = await response.json();
+      return [{ array: [...baseArray], isInitial: true }, ...data.steps];
+    } catch(error) {
+      console.error(error);
+      return [];
+    }
+  }, [isDragging, selectedAlgorithm]);
 
     const startSorting = async () => {
         if(isDragging) return;
@@ -137,6 +137,13 @@ const useSorting = (array, setArray) => {
             setArray([...steps[currentStep].array]);
         }
     }, [currentStep, steps, setArray, isSorting]);
+
+    useEffect(() => {
+        if(selectedAlgorithm){
+            setSteps([]);
+            setCurrentStep(0);
+        }
+    }, [selectedAlgorithm]);
 
     return {
         isSorting,
