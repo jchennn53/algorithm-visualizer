@@ -63,11 +63,11 @@ app.post('/quick-sort', (req, res) => {
         steps.push({
             array: [...arr],
             comparedIndices: [high],
-            pivotIndex: high,
+            pivotIndex: pi,
             swapped: false
         });
 
-        for (let j = low; j < high; j++) {
+        for(let j = low; j < high; j++){
             steps.push({
                 array: [...arr],
                 comparedIndices: [j],
@@ -75,9 +75,18 @@ app.post('/quick-sort', (req, res) => {
                 swapped: false
             });
 
-            if (arr[j] < pivot) {
+            if(arr[j] < pivot){
                 i++;
+
+                steps.push({
+                    array: [...arr],
+                    comparedIndices: [i, j],
+                    pivotIndex: pi,
+                    swapped: true
+                });
+
                 [arr[i], arr[j]] = [arr[j], arr[i]];
+
                 steps.push({
                     array: [...arr],
                     comparedIndices: [i, j],
@@ -93,10 +102,12 @@ app.post('/quick-sort', (req, res) => {
             array: [...arr],
             comparedIndices: [i + 1, high],
             pivotIndex: pi,
-            swapped: true
-        });
-        return i + 1;
-    };
+			swapped: true,
+			isPivotSwap: true,
+			partitionIndex: i + 1
+		});
+		return i + 1;
+	};
 
     quickSort(arr, 0, arr.length - 1);
     res.json({ steps });
@@ -107,7 +118,7 @@ app.post('/selection-sort', (req, res) => {
     const steps = [];
     let arr = [...array];
 
-    for (let i = 0; i < arr.length; i++) {
+    for(let i = 0; i < arr.length; i++){
         let minIdx = i;
         for (let j = i + 1; j < arr.length; j++) {
             steps.push({
@@ -116,11 +127,11 @@ app.post('/selection-sort', (req, res) => {
                 swapped: false
             });
 
-            if (arr[j] < arr[minIdx]) {
+            if(arr[j] < arr[minIdx]){
                 minIdx = j;
             }
         }
-        if (minIdx !== i) {
+        if(minIdx !== i){
             [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
             steps.push({
                 array: [...arr],
@@ -138,7 +149,7 @@ app.post('/insertion-sort', (req, res) => {
     const steps = [];
     let arr = [...array];
 
-    for (let i = 1; i < arr.length; i++){
+    for(let i = 1; i < arr.length; i++){
 		let key = arr[i];
 		let j = i - 1;
 
@@ -163,7 +174,7 @@ app.post('/merge-sort', (req, res) => {
     let arr = [...array];
 
     const mergeSort = (arr, left, right) => {
-        if (left < right) {
+        if(left < right){
             const mid = Math.floor((left + right) / 2);
             mergeSort(arr, left, mid);
             mergeSort(arr, mid + 1, right);
@@ -178,10 +189,10 @@ app.post('/merge-sort', (req, res) => {
         const L = [];
         const R = [];
 
-        for (let i = 0; i < n1; i++) {
+        for(let i = 0; i < n1; i++){
             L.push(arr[left + i]);
         }
-        for (let j = 0; j < n2; j++) {
+        for(let j = 0; j < n2; j++){
             R.push(arr[mid + 1 + j]);
         }
 
@@ -189,14 +200,14 @@ app.post('/merge-sort', (req, res) => {
         let j = 0;
         let k = left;
 
-        while (i < n1 && j < n2) {
+        while(i < n1 && j < n2){
             steps.push({
                 array: [...arr],
                 comparedIndices: [left + i, mid + 1 + j],
                 swapped: false
             });
 
-            if (L[i] <= R[j]) {
+            if(L[i] <= R[j]){
                 arr[k] = L[i];
                 steps.push({
                     array: [...arr],
@@ -204,7 +215,7 @@ app.post('/merge-sort', (req, res) => {
                     swapped: true
                 });
                 i++;
-            } else {
+            } else{
                 arr[k] = R[j];
                 steps.push({
                     array: [...arr],
@@ -216,7 +227,7 @@ app.post('/merge-sort', (req, res) => {
             k++;
         }
 
-        while (i < n1) {
+        while(i < n1){
             arr[k] = L[i];
             steps.push({
                 array: [...arr],
@@ -227,7 +238,7 @@ app.post('/merge-sort', (req, res) => {
             k++;
         }
 
-        while (j < n2) {
+        while(j < n2){
             arr[k] = R[j];
             steps.push({
                 array: [...arr],

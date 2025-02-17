@@ -12,18 +12,19 @@ const algorithms = [
 const AlgorithmSelector = ({ onSelect }) => {
     return (
         <div className="algorithm-selector">
-        <h2>Choose an algorithm</h2>
-        <div className="algorithm-grid">
-            {algorithms.map((algo) => (
-            <button 
-                key={algo.value}
-                onClick={() => onSelect(algo.value)}
-                className="algorithm-card"
-            >
-                {algo.name}
-            </button>
-            ))}
-        </div>
+            <h1>Algorithm Visualizer</h1>
+            <h2>Choose an algorithm</h2>
+            <div className="algorithm-grid">
+                {algorithms.map((algo) => (
+                <button 
+                    key={algo.value}
+                    onClick={() => onSelect(algo.value)}
+                    className="algorithm-card"
+                >
+                    {algo.name}
+                </button>
+                ))}
+            </div>
         </div>
     );
 };
