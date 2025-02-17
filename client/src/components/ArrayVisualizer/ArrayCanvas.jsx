@@ -4,6 +4,7 @@ import './styles.css';
 
 const HIGHLIGHT = 'red';
 const PIVOT_COLOR = '#9847f4';
+const SWAP = 'yellow';
 const NORMAL = '#005340';
 const MIN_BAR_WIDTH = 40;
 
@@ -16,26 +17,23 @@ const ArrayCanvas = ({
     speed = 500,
     swapElements,
     isManualStep,
-    isSorting = false
+    isSorting = false,
+    isDragging,
+    setIsDragging
 }) => {
-    const svgRef = useRef(); //reference to the svg element (d3)
+    const svgRef = useRef();
     const [editingIndex, setEditingIndex] = useState(-1);
     const [editValue, setEditValue] = useState('');
-    const dragStart = useRef(0); //initial position of the drag
+    const dragStart = useRef(0);
 
     useEffect(() => {
-        //select the svg element
         const svg = d3.select(svgRef.current);
-        
-        //required width based on the number of elements
-        const requiredWidth = array.length * (MIN_BAR_WIDTH * 2); //double the minimum width to account for padding
-        const width = Math.max(800, requiredWidth); //at least 800px or the required width
+        const requiredWidth = array.length * (MIN_BAR_WIDTH * 2);
+        const width = Math.max(800, requiredWidth);
         const height = 200;
 
-        //update the svg width
         svg.attr('width', width);
 
-        //only clear on initial render
         if (!svg.select('g').size()) {
             svg.selectAll('*').remove();
             svg.append('g');
@@ -44,11 +42,11 @@ const ArrayCanvas = ({
         const xScale = d3.scaleBand()
             .domain(d3.range(array.length))
             .range([0, width])
-            .padding(0.3); //consistent padding between bars
+            .padding(0.3);
 
         const yScale = d3.scaleLinear()
-            .domain([0, Math.max(d3.max(array) || 0, 1)]) //ensure minimum domain of 1
-            .range([height - 50, 20]); //to avoid text overlap
+            .domain([0, Math.max(d3.max(array) || 0, 1)])
+            .range([height - 50, 20]);
 
         const key = d => d;
 
@@ -61,16 +59,14 @@ const ArrayCanvas = ({
             .attr('class', 'bar-group')
             .attr('transform', (_, i) => `translate(${xScale(i)},0)`);
 
-        //create bars with consistent width
         barsEnter.append('rect')
             .attr('width', xScale.bandwidth())
             .attr('y', d => yScale(d))
             .attr('height', d => height - 30 - yScale(d))
             .attr('fill', NORMAL)
-            .attr('rx', 4) 
-            .attr('ry', 4); 
+            .attr('rx', 4)
+            .attr('ry', 4);
 
-        //position text above bars
         barsEnter.append('text')
             .text(d => d)
             .attr('x', xScale.bandwidth() / 2)
@@ -82,14 +78,11 @@ const ArrayCanvas = ({
             .style('user-select', 'none')
             .style('pointer-events', 'none');
 
-        //update all bars
         const allBars = bars.merge(barsEnter);
 
-        //get current step details
         const current = steps && steps[currentStep] ? steps[currentStep] : {};
-        const { comparedIndices = [], pivotIndex = null } = current;
+        const { comparedIndices = [], pivotIndex = null, swapped = false } = current;
 
-        //apply transitions for position and color
         allBars
             .transition()
             .duration(isSorting || isManualStep ? speed : 0)
@@ -99,12 +92,15 @@ const ArrayCanvas = ({
         allBars.select('rect')
             .transition()
             .duration(isSorting || isManualStep ? speed : 0)
-            .attr('width', xScale.bandwidth()) //ensure consistent width during updates
+            .attr('width', xScale.bandwidth())
             .attr('fill', (_, i) => {
                 if (pivotIndex !== null && i === pivotIndex) {
                     return PIVOT_COLOR;
                 }
-                return comparedIndices.includes(i) ? HIGHLIGHT : NORMAL;
+                if (comparedIndices.includes(i)) {
+                    return swapped ? SWAP : HIGHLIGHT;
+                }
+                return NORMAL;
             })
             .attr('y', d => yScale(d))
             .attr('height', d => height - 30 - yScale(d));
@@ -112,11 +108,10 @@ const ArrayCanvas = ({
         allBars.select('text')
             .transition()
             .duration(isSorting ? speed + 100 : 0)
-            .attr('x', xScale.bandwidth() / 2) //center text within bar
+            .attr('x', xScale.bandwidth() / 2)
             .attr('y', d => yScale(d) - 5)
             .text(d => d);
 
-        //remove old elements
         bars.exit().remove();
 
         //add drag behavior

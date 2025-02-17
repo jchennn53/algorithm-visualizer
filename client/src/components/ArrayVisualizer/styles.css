@@ -204,3 +204,50 @@ rect:hover {
         width: 100%;
     }
 }
+
+/*-------------------------------------*/
+.step-description {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 800px;
+    border: 1px solid var(--glass-bg);
+    text-align: center;
+}
+
+.step-description p {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.algorithm-info {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 800px;
+    border: 1px solid var(--glass-bg);
+}
+
+.algorithm-info h2 {
+    color: var(--accent-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.algorithm-info p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.progress-indicator {
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--text-secondary);
+}
+
+.progress-indicator p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}

@@ -8,22 +8,22 @@ const useSorting = (array, setArray, selectedAlgorithm) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isManualStep, setIsManualStep] = useState(false);
 
-const fetchSortingSteps = useCallback(async (baseArray) => {
-    if(isDragging) return;
-  
-    try {
-      const response = await fetch(`http://localhost:5000/${selectedAlgorithm}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ array: baseArray })
-      });
-      const data = await response.json();
-      return [{ array: [...baseArray], isInitial: true, pivotIndex: null }, ...data.steps];
-    } catch(error) {
-      console.error(error);
-      return [];
-    }
-  }, [isDragging, selectedAlgorithm]);
+    const fetchSortingSteps = useCallback(async (baseArray) => {
+        if(isDragging) return;
+    
+        try {
+        const response = await fetch(`http://localhost:5000/${selectedAlgorithm}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ array: baseArray })
+        });
+        const data = await response.json();
+        return [{ array: [...baseArray], isInitial: true, pivotIndex: null }, ...data.steps];
+        } catch(error) {
+            console.error(error);
+            return [];
+        }
+    }, [isDragging, selectedAlgorithm]);
 
     const startSorting = async () => {
         if(isDragging) return;

@@ -5,7 +5,8 @@ const algorithms = [
     { name: 'Bubble Sort', value: 'bubble-sort' },
     { name: 'Quick Sort', value: 'quick-sort' },
     { name: 'Selection Sort', value: 'selection-sort' },
-    { name: 'Insertion Sort', value: 'insertion-sort' }
+    { name: 'Insertion Sort', value: 'insertion-sort' },
+    { name: 'Merge Sort', value: 'merge-sort' }
 ];
 
 const AlgorithmSelector = ({ onSelect }) => {

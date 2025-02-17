@@ -157,6 +157,92 @@ app.post('/insertion-sort', (req, res) => {
 	res.json({ steps });
 });
 
+app.post('/merge-sort', (req, res) => {
+    const { array } = req.body;
+    const steps = [];
+    let arr = [...array];
+
+    const mergeSort = (arr, left, right) => {
+        if (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
+        }
+    };
+
+    const merge = (arr, left, mid, right) => {
+        const n1 = mid - left + 1;
+        const n2 = right - mid;
+
+        const L = [];
+        const R = [];
+
+        for (let i = 0; i < n1; i++) {
+            L.push(arr[left + i]);
+        }
+        for (let j = 0; j < n2; j++) {
+            R.push(arr[mid + 1 + j]);
+        }
+
+        let i = 0;
+        let j = 0;
+        let k = left;
+
+        while (i < n1 && j < n2) {
+            steps.push({
+                array: [...arr],
+                comparedIndices: [left + i, mid + 1 + j],
+                swapped: false
+            });
+
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                steps.push({
+                    array: [...arr],
+                    comparedIndices: [k],
+                    swapped: true
+                });
+                i++;
+            } else {
+                arr[k] = R[j];
+                steps.push({
+                    array: [...arr],
+                    comparedIndices: [k],
+                    swapped: true
+                });
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = L[i];
+            steps.push({
+                array: [...arr],
+                comparedIndices: [k],
+                swapped: true
+            });
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            arr[k] = R[j];
+            steps.push({
+                array: [...arr],
+                comparedIndices: [k],
+                swapped: true
+            });
+            j++;
+            k++;
+        }
+    };
+
+    mergeSort(arr, 0, arr.length - 1);
+    res.json({ steps });
+});
+
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
