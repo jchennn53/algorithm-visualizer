@@ -1,7 +1,7 @@
 import React from 'react';
 import './ArrayVisualizer/styles.css';
 
-const StepDescription = ({ algorithm, currentStep, steps }) => {
+const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
     const getDescription = () => {
         if(!steps || !steps[currentStep]) return '';
         
@@ -45,7 +45,9 @@ const StepDescription = ({ algorithm, currentStep, steps }) => {
                 //elements swap
                 if(comparedIndices?.length === 2 && swapped) {
                     const [i, j] = comparedIndices;
-                    return `Swapping ${step.array[j]} and ${step.array[i]} since ${step.array[i]} is smaller`;
+                    const smaller = steps[currentStep - 1].array[j];
+                    const larger = steps[currentStep - 1].array[i];
+                    return `Swapping ${smaller} and ${larger} since ${smaller} is smaller`;
                 }
             }
             break;
@@ -77,9 +79,10 @@ const StepDescription = ({ algorithm, currentStep, steps }) => {
         }
     };
 
+    const isSortingEnded = !isSorting && steps && steps.length > 0 && currentStep >= steps.length - 1;
     return (
         <div className="step-description">
-        <p>{getDescription() || 'Ready to start sorting...'}</p>
+            <p>{isSortingEnded ? 'Sorting complete!' : getDescription() || 'Ready to start sorting...'}</p>
         </div>
     );
 };

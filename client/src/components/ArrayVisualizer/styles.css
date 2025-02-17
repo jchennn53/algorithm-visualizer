@@ -206,6 +206,8 @@ rect:hover {
 }
 
 /*-------------------------------------*/
+/* Step Description */
+/*-------------------------------------*/
 .step-description {
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);

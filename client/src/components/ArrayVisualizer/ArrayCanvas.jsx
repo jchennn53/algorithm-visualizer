@@ -94,9 +94,21 @@ const ArrayCanvas = ({
             .duration(isSorting || isManualStep ? speed : 0)
             .attr('width', xScale.bandwidth())
             .attr('fill', (_, i) => {
+                if (current.isPivotSwap) {
+                    //partition index is where the pivot will end up
+                    if (i === current.partitionIndex) {
+                        return PIVOT_COLOR;
+                    }
+                    //pivot index is the position of the pivot element
+                    if (i === pivotIndex) {
+                        return SWAP;
+                    }
+                }
+                
                 if (pivotIndex !== null && i === pivotIndex) {
                     return PIVOT_COLOR;
                 }
+            
                 if (comparedIndices.includes(i)) {
                     return swapped ? SWAP : HIGHLIGHT;
                 }

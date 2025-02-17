@@ -69,6 +69,7 @@ const SortingVisualization = () => {
 				algorithm={selectedAlgorithm}
 				currentStep={currentStep}
 				steps={steps}
+				isSorting={isSorting}
 			/>
 
 			<div className="progress-indicator">
@@ -105,8 +106,8 @@ const SortingVisualization = () => {
 
 const getAlgorithmDescription = (algorithm) => {
 	const descriptions = {
-		'bubble-sort': 'Repeatedly traverses the list, comparing and swapping adjacent elements that are out of order.',
-		'quick-sort': 'Selects a "pivot" element, partitions the array around it, and recursively sorts the sub-arrays.',
+		'bubble-sort': 'Repeatedly traverses the list, comparing and swapping adjacent elements that are out of order. In simple terms, if the first element is greater than the second element, they are swapped.',
+		'quick-sort': 'Selects a "pivot" element, partitions the array around it, and recursively sorts the sub-arrays. In simple terms, if the element is less than the pivot, it is moved to the left side of the pivot, otherwise it is moved to the right side.',
 	    'selection-sort': 'Finds the minimum element from the unsorted portion and places it at the beginning repeatedly.',
 	    'insertion-sort': 'Builds the sorted array one item at a time by inserting elements into their correct position.',
 	    'merge-sort': 'Recursively divides the array into smaller subarrays, sorts them, and then merges the sorted subarrays.'
