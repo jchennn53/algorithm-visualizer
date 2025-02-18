@@ -1,6 +1,5 @@
-//import { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import './AlgorithmSelector.css';
+
 const algorithms = [
     { name: 'Bubble Sort', value: 'bubble-sort' },
     { name: 'Quick Sort', value: 'quick-sort' },
@@ -15,14 +14,15 @@ const AlgorithmSelector = ({ onSelect }) => {
             <h1>Algorithm Visualizer</h1>
             <h2>Choose an algorithm</h2>
             <div className="algorithm-grid">
+                {/*map through algorithms and create a button for each*/}
                 {algorithms.map((algo) => (
-                <button 
-                    key={algo.value}
-                    onClick={() => onSelect(algo.value)}
-                    className="algorithm-card"
-                >
-                    {algo.name}
-                </button>
+                    <button 
+                        key={algo.value}
+                        onClick={() => onSelect(algo.value)}
+                        className="algorithm-card"
+                    >
+                        {algo.name}
+                    </button>
                 ))}
             </div>
         </div>

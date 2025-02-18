@@ -1,5 +1,4 @@
 import { useState } from 'react';
-//import { Plus, Shuffle, SkipBack, SkipForward, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
 const ArrayControls = ({
     addElement,
@@ -77,7 +76,7 @@ const ArrayControls = ({
 
                 <label>
                     Speed:
-                    <input type = "range" min = "100" max = "2000" value = {speed}
+                    <input type = "range" min = "100" max = "1000" value = {speed}
                             onChange = {(e) => setSpeed(Number(e.target.value))} />
                     ({speed}ms)
                 </label>

@@ -6,7 +6,7 @@ import StepDescription from './components/StepDescription';
 import useArrayState from './components/ArrayVisualizer/useArrayState';
 import useSorting from './components/ArrayVisualizer/useSorting';
 
-const SortingVisualization = () => {
+const App = () => {
 	const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
 	const { 
 		array, 
@@ -42,7 +42,7 @@ const SortingVisualization = () => {
 
 	return (
     	<div className="container">
-      		<h1>Algorithm Visualizer</h1>
+      		<h1 onClick={() => setSelectedAlgorithm(null)} style={{ cursor: 'pointer' }}>Algorithm Visualizer</h1>
       
 			<div className="algorithm-info">
 				<h2>
@@ -115,4 +115,4 @@ const getAlgorithmDescription = (algorithm) => {
 	return descriptions[algorithm] || '';
 };
 
-export default SortingVisualization;
+export default App;
