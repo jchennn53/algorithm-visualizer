@@ -131,6 +131,7 @@ app.post('/selection-sort', (req, res) => {
                 minIdx = j;
             }
         }
+
         if(minIdx !== i){
             [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
             steps.push({
@@ -150,22 +151,68 @@ app.post('/insertion-sort', (req, res) => {
     let arr = [...array];
 
     for(let i = 1; i < arr.length; i++){
-		let key = arr[i];
-		let j = i - 1;
+        let key = arr[i];
+        let j = i - 1;
 
-		while(j >= 0 && arr[j] > key){
-			arr[j + 1] = arr[j];
-			j--;
-		}
-		arr[j + 1] = key;
-		steps.push({
-			array: [...arr],
-			comparedIndices: [j + 1, i],
-			swapped: true
-		});
-	}
+        //current element
+        steps.push({
+            array: [...arr],
+            comparedIndices: [],
+            selectedElement: i,
+            swapped: false,
+            isInitialSelection: true
+        });
 
-	res.json({ steps });
+        let swap = false;
+        //create a new array without the current element
+        let tempArr = [...arr];
+        tempArr.splice(i, 1);
+
+        while(j >= 0 && arr[j] > key){
+            //create a new array without the current element and add it at position j + 1
+            let currTempArr = [...tempArr];
+            currTempArr.splice(j + 1, 0, key); 
+
+            //show the current element at j + 1
+            steps.push({
+                array: currTempArr,
+                comparedIndices: [j, j + 1],
+                selectedElement: j + 1,
+                swapped: false
+            });
+            
+            arr[j + 1] = arr[j];
+            tempArr = [...arr];
+            tempArr.splice(j + 1, 1); //delete the current element at j + 1
+            
+            //create a new array with the current element at j
+            let shiftArr = [...tempArr];
+            shiftArr.splice(j, 0, key); 
+
+            //shift
+            steps.push({
+                array: shiftArr,
+                comparedIndices: [j, j + 1],
+                selectedElement: j,
+                swapped: true
+            });
+            
+            swap = true;
+            j--;
+        }
+        
+        arr[j + 1] = key;
+        
+        steps.push({
+            array: [...arr],
+            comparedIndices: [j + 1],
+            selectedElement: j + 1,
+            swapped: swap,
+            isFinalPlacement: true
+        });
+    }
+
+    res.json({ steps });
 });
 
 app.post('/merge-sort', (req, res) => {

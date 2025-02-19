@@ -6,7 +6,10 @@ const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
         if(!steps || !steps[currentStep]) return '';
         
         const step = steps[currentStep];
-        const { comparedIndices, swapped, pivotIndex, partitionIndex } = step;
+        const { comparedIndices, swapped, 
+                pivotIndex, partitionIndex,
+                selectedElement, isInitialSelection, isFinalPlacement }
+        = step;
         
         switch(algorithm){
         case 'bubble-sort':
@@ -61,8 +64,24 @@ const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
             break;
             
         case 'insertion-sort':
-            if(comparedIndices?.length === 2){
-                return `Inserting ${step.array[comparedIndices[1]]} into its correct position`;
+            if(step.selectedElement !== undefined){
+                const selectedValue = step.array[step.selectedElement];
+                
+                if(step.isInitialSelection){
+                    return `Selected ${selectedValue} to insert into sorted portion`;
+                }
+                
+                if(comparedIndices?.length === 2){
+                    return swapped 
+                        ? `Moving ${step.array[comparedIndices[1]]} right to make space for ${selectedValue}`
+                        : `Comparing ${selectedValue} with ${step.array[comparedIndices[0]]}`;
+                }
+                
+                if(step.isFinalPlacement){
+                    return step.swapped 
+                        ? `Placed ${selectedValue} in its sorted position`
+                        : `${selectedValue} is in its correct position`;
+                }
             }
             break;
             
