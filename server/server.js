@@ -183,7 +183,7 @@ app.post('/insertion-sort', (req, res) => {
             
             arr[j + 1] = arr[j];
             tempArr = [...arr];
-            tempArr.splice(j + 1, 1); //delete the current element at j + 1
+            tempArr.splice(j + 1, 1); //delete the element at j + 1
             
             //create a new array with the current element at j
             let shiftArr = [...tempArr];
@@ -218,86 +218,82 @@ app.post('/insertion-sort', (req, res) => {
 app.post('/merge-sort', (req, res) => {
     const { array } = req.body;
     const steps = [];
-    let arr = [...array];
-
+    
     const mergeSort = (arr, left, right) => {
-        if(left < right){
+        if (left < right) {
             const mid = Math.floor((left + right) / 2);
-            mergeSort(arr, left, mid);
-            mergeSort(arr, mid + 1, right);
-            merge(arr, left, mid, right);
+            
+            //show the current subarray
+            steps.push({
+                array: [...arr],
+                mergeIndices: { 
+                    left: left,
+                    right: right,
+                    mid: mid
+                },
+                dividing: true 
+            });
+            
+            arr = mergeSort(arr, left, mid);
+            arr = mergeSort(arr, mid + 1, right);
+            arr = merge(arr, left, mid, right);
         }
+        return arr;
     };
-
+    
     const merge = (arr, left, mid, right) => {
-        const n1 = mid - left + 1;
-        const n2 = right - mid;
-
-        const L = [];
-        const R = [];
-
-        for(let i = 0; i < n1; i++){
-            L.push(arr[left + i]);
-        }
-        for(let j = 0; j < n2; j++){
-            R.push(arr[mid + 1 + j]);
-        }
-
-        let i = 0;
-        let j = 0;
-        let k = left;
-
-        while(i < n1 && j < n2){
+        let i = left;
+        let j = mid + 1;
+        
+        while(i <= mid && j <= right){
             steps.push({
                 array: [...arr],
-                comparedIndices: [left + i, mid + 1 + j],
-                swapped: false
+                comparedIndices: [i, j],
+                comparing: true,
+                description: 'compare'
             });
-
-            if(L[i] <= R[j]){
-                arr[k] = L[i];
+            
+            if(arr[j] < arr[i]){
+                const valueToInsert = arr[j];
+                
                 steps.push({
                     array: [...arr],
-                    comparedIndices: [k],
-                    swapped: true
+                    comparedIndices: [i, j],
+                    swapped: true,
+                    description: 'swap-needed'
                 });
-                i++;
-            } else{
-                arr[k] = R[j];
+                
+                let tempArr = [...arr];
+                //shift the elements to the right to make space for the value to insert
+                for(let k = j; k > i; k--){
+                    tempArr[k] = tempArr[k - 1];
+                }
+                tempArr[i] = valueToInsert;
+                
                 steps.push({
-                    array: [...arr],
-                    comparedIndices: [k],
-                    swapped: true
+                    array: [...tempArr],
+                    comparedIndices: [i, i + 1],
+                    swapped: true,
+                    description: 'swapped'
                 });
+                
+                arr = [...tempArr];
                 j++;
+                mid++;
             }
-            k++;
-        }
-
-        while(i < n1){
-            arr[k] = L[i];
-            steps.push({
-                array: [...arr],
-                comparedIndices: [k],
-                swapped: true
-            });
             i++;
-            k++;
         }
-
-        while(j < n2){
-            arr[k] = R[j];
-            steps.push({
-                array: [...arr],
-                comparedIndices: [k],
-                swapped: true
-            });
-            j++;
-            k++;
-        }
+        
+        return arr;
     };
+    
+    let result = mergeSort([...array], 0, array.length - 1);
 
-    mergeSort(arr, 0, arr.length - 1);
+    steps.push({
+        array: [...result],
+        completed: true
+    });
+    
     res.json({ steps });
 });
 

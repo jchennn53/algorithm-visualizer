@@ -86,13 +86,31 @@ const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
             break;
             
         case 'merge-sort':
+            if(step.dividing){
+                const { left, right } = step.mergeIndices;
+                return `Dividing subarray from position ${left} to ${right}`;
+            }
+            
             if(comparedIndices?.length === 2){
-                return `Merging: comparing elements ${step.array[comparedIndices[0]]} and ${step.array[comparedIndices[1]]}`;
-            } else if(comparedIndices?.length === 1){
-                return `Placing ${step.array[comparedIndices[0]]} in its sorted position`;
+                const [i, j] = comparedIndices;
+                const firstElement = step.array[i];
+                const secondElement = step.array[j];
+                
+                if(step.description === 'compare'){
+                    return `Comparing ${firstElement} with ${secondElement}`;
+                }
+                
+                if(step.description === 'swap-needed'){
+                    return `${firstElement} is greater than ${secondElement}, preparing to swap`;
+                }
+                
+                if(step.description === 'swapped'){
+                    return `Swapping ${firstElement} to position ${i}`;
+                }
             }
             break;
-            
+
+
         default:
             return '';
         }

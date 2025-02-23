@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import './styles.css';
 
+const PIVOT_COLOR = '#9847f4'; //for quick sort
+const SELECTED = '#ff7b00'; //for insertion sort
+const MERGE_AREA = '#B56576'; //for merge sort
 const HIGHLIGHT = 'red';
-const PIVOT_COLOR = '#9847f4';
-const SELECTED = '#ff7b00';
-const CURRENT_KEY = '#00aaff';
 const SWAP = 'yellow';
 const NORMAL = '#005340';
 const MIN_BAR_WIDTH = 40;
@@ -95,35 +95,26 @@ const ArrayCanvas = ({
             .transition()
             .duration(isSorting || isManualStep ? speed : 0)
             .attr('width', xScale.bandwidth())
-            .attr('fill', (d, i) => {
-                if(current.isPivotSwap){
-                    //partition index is where the pivot will end up
-                    if(i === current.partitionIndex){
-                        return PIVOT_COLOR;
-                    }
-                    //pivot index is the position of the pivot element
-                    if(i === pivotIndex){
-                        return SWAP;
-                    }
+            .attr('fill', (_, i) => {
+                //merge sort
+                if(current.dividing && current.mergeIndices){
+                    const { left, right } = current.mergeIndices;
+                    if (i >= left && i <= right) return MERGE_AREA;
                 }
-
-                if(pivotIndex !== null && i === pivotIndex){
+        
+                //quick sort
+                if(current.pivotIndex === i){
                     return PIVOT_COLOR;
                 }
                 
-                if(current.selectedElement !== undefined){
-                    if(i === current.selectedElement){
-                        return SELECTED;
-                    }
-                    
-                    if(comparedIndices?.includes(i) && current.currentElement !== undefined){
-                        return swapped ? SWAP : HIGHLIGHT;
-                    }
+                if(current.movingElement === i || current.toPosition === i){
+                    return SWAP;
                 }
 
                 if(comparedIndices.includes(i)){
-                    return swapped ? SWAP : HIGHLIGHT;
+                    return current.swapped ? SWAP : HIGHLIGHT;
                 }
+                
                 return NORMAL;
             })
             .attr('y', d => yScale(d))
