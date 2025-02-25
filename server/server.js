@@ -297,6 +297,167 @@ app.post('/merge-sort', (req, res) => {
     res.json({ steps });
 });
 
+//--------------------GRAPH ALGORITHMS--------------------
+app.post('/breadth-first-search', (req, res) => {
+    const { graph, startNode } = req.body;
+    const steps = [];
+
+    //initialize visited object
+    const visited = {};
+    Object.keys(graph).forEach(node => {
+        visited[node] = false;
+    });
+
+    //initialize queue
+    const queue = [startNode];
+    visited[startNode] = true;
+
+    //add step for starting the algorithm
+
+    while(queue.length > 0){
+        const currentNode = queue.shift();
+        
+        //add step for visiting the current node
+        const neighbors = graph[current] || [];
+
+        for(const neighbor of neighbors){
+            if(!visited[neighbor]){
+                visited[neighbor] = true;
+                queue.push(neighbor);
+                //add step for discovering the neighbor
+            } else{
+                //add step for already visited neighbor
+            }
+        }
+    }
+});
+
+app.post('/depth-first-search', (req, res) => {
+    const { graph, startNode } = req.body;
+    const steps = [];
+
+    const visited = {};
+    Object.keys(graph).forEach(node => {
+        visited[node] = false;
+    });
+
+    const stack = [startnode];
+
+    //add step for starting the algorithm
+
+    while(stack.length > 0){
+        const current = stack.pop();
+
+        if(!visited[current]){
+            continue;
+        }
+
+        visited[current] = true;
+
+        //add step for visiting the current node
+
+        //reverse because of the stack, so the last added neighbor is processed first
+        const neighbors = [...(graph[current] || [])].reverse(); 
+
+        for(const neighbor of neighbors){
+            if(!visited[neighbor]){
+                stack.push(neighbor);
+
+                //add step for discovering the neighbor
+
+            } else{
+                //add step for already visited neighbor
+
+            }
+        }
+    }
+
+    res.json({ steps });
+});
+
+app.post('/dijkstra', (req, res) => {
+    const { graph, startNode } = req.body;
+    const steps = [];
+
+    const distances = {};
+    const visited = {};
+    const previous = {};    
+
+    Object.keys(graph).forEach(node => {
+        distances[node] = Infinity;
+        visited[node] = false;
+        previous[node] = null;
+    });
+
+    distances[startNode] = 0;
+
+    //add step for starting the algorithm
+
+    while(true){
+        let current = null;
+        let minDistance = Infinity;
+
+        //find the node with the smallest distance that has not been visited
+        Object.keys(distances).forEach(node => {
+            if(!visited[node] && distances[node] < minDistance){
+                minDistance = distances[node];
+                current = node;
+            }
+        });
+
+        //if all nodes have been visited or the smallest distance is infinity, break
+        if(current === null || distances[current] === Infinity){
+            break;
+        }
+
+        visited[current] = true;
+
+        //add step for visiting the current node
+
+        for(const neighbor in graph[current]){
+            const weight = graph[current][neighbor];
+            if(weight !== undefined){
+                const distance = distances[current] + weight;
+
+                //add step for comparing the new distance with the current distance
+
+                if(distance < distances[neighbor]){
+                    distances[neighbor] = distance;
+                    previous[neighbor] = current;
+
+                    //add step for updating the distance and previous node
+
+                } else{
+                    //add step for not updating the distance and previous node
+                }
+            }
+        }
+    }
+
+    const paths = {};
+    for(const node in distances){
+        if(distances[node] < Infinity){
+            let revPath = [];
+            let current = node;
+
+            while(current !== null){
+                revPath.push(current);
+                current = previous[current];
+            }
+
+            paths[node] = {
+                distance: distances[node],
+                path: revPath.reverse()
+            };
+        }
+    }
+    
+    //add step for showing the shortest path
+
+    res.json({ steps });
+});
+
+
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
