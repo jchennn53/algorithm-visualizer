@@ -15,7 +15,8 @@ const App = () => {
 		removeElement, 
 		updateElement, 
 		setRandomArray, 
-		swapElements 
+		swapElements,
+		resetArray
 	} = useArrayState();
 
 	const {
@@ -35,6 +36,12 @@ const App = () => {
 		isDragging,
 		setIsDragging
 	} = useSorting(array, setArray, selectedAlgorithm);
+
+	React.useEffect(() => {
+		if(selectedAlgorithm){
+			resetArray();
+		}
+	}, [selectedAlgorithm]);
 
 	if(!selectedAlgorithm){
 		return <AlgorithmSelector onSelect={setSelectedAlgorithm} />;
