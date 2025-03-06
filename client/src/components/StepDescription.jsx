@@ -1,5 +1,5 @@
 import React from 'react';
-import './ArrayVisualizer/styles.css';
+import './styles.css';
 
 const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
     const getDescription = () => {

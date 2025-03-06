@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import './styles.css';
+import '../styles.css'
 
 const PIVOT_COLOR = '#9847f4'; //for quick sort
 const SELECTED = '#ff7b00'; //for insertion sort

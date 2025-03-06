@@ -313,23 +313,70 @@ app.post('/breadth-first-search', (req, res) => {
     visited[startNode] = true;
 
     //add step for starting the algorithm
+    steps.push({
+        visited: {...visited},
+        queue: [...queue],
+        neighbors: [],
+        current: startNode,
+        isStartNode: true,
+    });
 
     while(queue.length > 0){
         const currentNode = queue.shift();
         
-        //add step for visiting the current node
+        //add step for selecting a node
+        steps.push({
+            visited: {...visited},
+            queue: [...queue],
+            neighbors:[],
+            current: currentNode,
+            isSelected: true
+        });
+
         const neighbors = graph[current] || [];
 
         for(const neighbor of neighbors){
+            steps.push({
+                visited: {...visited},
+                queue: [...queue],
+                current: currentNode,
+                neighbors: [neighbor],
+                isVisiting: true,
+            });
+
             if(!visited[neighbor]){
                 visited[neighbor] = true;
                 queue.push(neighbor);
                 //add step for discovering the neighbor
+                steps.push({
+                    visited: {...visited},
+                    queue: [...queue],
+                    current: currentNode,
+                    neighbors: [neighbor],
+                    isNotVisited: true
+                });
             } else{
                 //add step for already visited neighbor
+                steps.push({
+                    visited: {...visited},
+                    queue: [...queue],
+                    current: currentNode,
+                    neighbors: [neighbor],
+                    isVisited: true
+                });
             }
         }
     }
+
+    steps.push({
+        visited: {...visited},
+        queue: [...queue],
+        current: null,
+        neighbors: [],
+        isFinished: true
+    });
+
+    res.json({ steps });
 });
 
 app.post('/depth-first-search', (req, res) => {
@@ -344,33 +391,75 @@ app.post('/depth-first-search', (req, res) => {
     const stack = [startnode];
 
     //add step for starting the algorithm
+    steps.push({
+        visited: {...visited},
+        stack: [...stack],
+        neighbors: [],
+        current: startNode,
+        isStartNode: true,
+    });
 
     while(stack.length > 0){
-        const current = stack.pop();
+        const currentNode = stack.pop();  
 
-        if(!visited[current]){
+        if(visited[currentNode]){
             continue;
         }
 
-        visited[current] = true;
+        visited[currentNode] = true;
 
-        //add step for visiting the current node
+        //add step for selecting the current node
+        steps.push({
+            visited: {...visited},
+            stack: [...stack],
+            current: currentNode,
+            neighbors: [],
+            isSelected: true 
+        });
 
         //reverse because of the stack, so the last added neighbor is processed first
-        const neighbors = [...(graph[current] || [])].reverse(); 
+        const neighbors = [...(graph[currentNode] || [])].reverse(); 
 
         for(const neighbor of neighbors){
+            steps.push({
+                visited: {...visited},
+                stack: [...stack],
+                current: currentNode,
+                neighbors: [neighbor],
+                isVisiting: true,
+            });
+
             if(!visited[neighbor]){
                 stack.push(neighbor);
 
                 //add step for discovering the neighbor
-
+                steps.push({
+                    visited: {...visited},
+                    stack: [...stack],
+                    current: currentNode,
+                    neighbors: [neighbor],
+                    isNotVisited: true
+                });
             } else{
                 //add step for already visited neighbor
-
+                steps.push({
+                    visited: {...visited},
+                    stack: [...stack],
+                    current: currentNode,
+                    neighbors: [neighbor],
+                    isVisited: true
+                });
             }
         }
     }
+
+    steps.push({
+        visited: {...visited},
+        stack: [...stack],
+        current: null,
+        neighbors: [],
+        isFinished: true
+    });
 
     res.json({ steps });
 });
@@ -392,43 +481,85 @@ app.post('/dijkstra', (req, res) => {
     distances[startNode] = 0;
 
     //add step for starting the algorithm
+    steps.push({
+        distances: {...distances},
+        visited: {...visited},
+        previous: {...previous},
+        current: startNode,
+        isStartNode: true
+    });
 
     while(true){
-        let current = null;
+        let currentNode = null;
         let minDistance = Infinity;
 
-        //find the node with the smallest distance that has not been visited
+        //find the node with the smallest distance that has not been visited - NOT THE MOST EFFICIENT WAY
         Object.keys(distances).forEach(node => {
             if(!visited[node] && distances[node] < minDistance){
                 minDistance = distances[node];
-                current = node;
+                currentNode = node;
             }
         });
 
         //if all nodes have been visited or the smallest distance is infinity, break
-        if(current === null || distances[current] === Infinity){
+        if(currentNode === null || distances[currentNode] === Infinity){
             break;
         }
 
-        visited[current] = true;
+        visited[currentNode] = true;
 
         //add step for visiting the current node
+        steps.push({
+            distances: {...distances},
+            visited: {...visited},
+            previous: {...previous},
+            current: currentNode,
+            isSelected: true 
+        });
 
-        for(const neighbor in graph[current]){
-            const weight = graph[current][neighbor];
+        const neighbors = graph[currentNode] || {};
+
+        for(const neighbor in neighbors){
+            const weight = neighbors[neighbor];
+
             if(weight !== undefined){
-                const distance = distances[current] + weight;
+                const distance = distances[currentNode] + weight;
 
                 //add step for comparing the new distance with the current distance
+                steps.push({
+                    distances: {...distances},
+                    visited: {...visited},
+                    previous: {...previous},
+                    current: currentNode,
+                    neighbors: [neighbor],
+                    isVisiting: true,
+                    newDistance: distance,
+                    currentDistance: distances[neighbor]
+                });
 
                 if(distance < distances[neighbor]){
                     distances[neighbor] = distance;
-                    previous[neighbor] = current;
+                    previous[neighbor] = currentNode;
 
                     //add step for updating the distance and previous node
-
+                    steps.push({
+                        distances: {...distances},
+                        visited: {...visited},
+                        previous: {...previous},
+                        current: currentNode,
+                        neighbors: [neighbor],
+                        isUpdated: true
+                    });
                 } else{
                     //add step for not updating the distance and previous node
+                    steps.push({
+                        distances: {...distances},
+                        visited: {...visited},
+                        previous: {...previous},
+                        current: currentNode,
+                        neighbors: [neighbor],
+                        isNotUpdated: true
+                    });
                 }
             }
         }
@@ -438,11 +569,11 @@ app.post('/dijkstra', (req, res) => {
     for(const node in distances){
         if(distances[node] < Infinity){
             let revPath = [];
-            let current = node;
+            let currentNode = node;
 
-            while(current !== null){
-                revPath.push(current);
-                current = previous[current];
+            while(currentNode !== null){
+                revPath.push(currentNode);
+                currentNode = previous[currentNode];
             }
 
             paths[node] = {
@@ -453,6 +584,13 @@ app.post('/dijkstra', (req, res) => {
     }
     
     //add step for showing the shortest path
+    steps.push({
+        distances: {...distances},
+        visited: {...visited},
+        previous: {...previous},
+        paths: paths,
+        isFinished: true
+    });
 
     res.json({ steps });
 });
