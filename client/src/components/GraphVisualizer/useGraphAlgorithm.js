@@ -97,7 +97,7 @@ const useGraphAlgorithm = (graph, selectedAlgorithm) => {
     }, [isSorting, currentStep, steps, speed]);
 
     useEffect(() => {
-        resetSorting();
+        resetAlgorithm();
     }, [selectedAlgorithm, startNode]);
 
     return {

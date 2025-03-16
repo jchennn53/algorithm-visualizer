@@ -49,7 +49,7 @@ const ArrayControls = ({
                 </button>
             </div>
 
-            <div className = "sort-controls">
+            <div className = "algo-controls">
                 <button onClick = {goToStart} disabled = {isSorting || currentStep <= 0 || steps.length === 0}>
                     Start state
                 </button>

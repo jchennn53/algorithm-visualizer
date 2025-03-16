@@ -119,7 +119,7 @@ const StepDescription = ({ algorithm, currentStep, steps, isSorting }) => {
     const isSortingEnded = !isSorting && steps && steps.length > 0 && currentStep >= steps.length - 1;
     return (
         <div className="step-description">
-            <p>{isSortingEnded ? 'Sorting complete!' : getDescription() || 'Ready to start sorting...'}</p>
+            <p>{isSortingEnded ? 'Algorithm complete!' : getDescription() || 'Ready to start the algorithm...'}</p>
         </div>
     );
 };
